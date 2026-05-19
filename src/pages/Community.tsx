@@ -1,16 +1,8 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
+import FriendChat from "@/components/FriendChat";
 
 const COMMUNITY_IMG = "https://cdn.poehali.dev/projects/181fc563-7ad1-4aa5-94f2-217f888c321d/files/96689f52-c741-484b-8241-df55edb395b5.jpg";
-
-const friends = [
-  { name: "NightWolf_X", status: "online", game: "Горная крепость", avatar: "🐺" },
-  { name: "StarBuilder99", status: "online", game: "Конструктор", avatar: "⭐" },
-  { name: "ShadowRider", status: "away", game: null, avatar: "🌙" },
-  { name: "PixelKnight", status: "offline", game: null, avatar: "⚔️" },
-  { name: "CrystalMage", status: "online", game: "Огненная пустыня", avatar: "💎" },
-  { name: "IronForge", status: "offline", game: null, avatar: "🔨" },
-];
 
 const groups = [
   { name: "Мастера рельефа", members: 1240, icon: "Mountain", color: "cyan", tag: "Строительство" },
@@ -30,12 +22,6 @@ const chatMessages = [
   { user: "PixelKnight", avatar: "⚔️", text: "Топчик, ждём ледяной биом!", time: "12:12" },
 ];
 
-const statusColor: Record<string, string> = {
-  online: "bg-green-400",
-  away: "bg-yellow-400",
-  offline: "bg-gray-500",
-};
-
 const colorClass: Record<string, string> = {
   cyan: "text-[var(--neon-cyan)] border-[var(--neon-cyan)]/25 bg-[var(--neon-cyan)]/5",
   orange: "text-[var(--neon-orange)] border-[var(--neon-orange)]/25 bg-[var(--neon-orange)]/5",
@@ -48,8 +34,6 @@ export default function Community() {
   const [activeTab, setActiveTab] = useState<Tab>("feed");
   const [chatInput, setChatInput] = useState("");
   const [messages, setMessages] = useState(chatMessages);
-  const [friendSearch, setFriendSearch] = useState("");
-
   const handleSend = () => {
     if (!chatInput.trim()) return;
     setMessages((prev) => [
@@ -59,14 +43,10 @@ export default function Community() {
     setChatInput("");
   };
 
-  const filteredFriends = friends.filter((f) =>
-    f.name.toLowerCase().includes(friendSearch.toLowerCase())
-  );
-
   const tabs: { id: Tab; label: string; icon: string }[] = [
     { id: "feed", label: "Лента", icon: "Rss" },
-    { id: "friends", label: "Друзья", icon: "UserPlus" },
-    { id: "chat", label: "Чат", icon: "MessageCircle" },
+    { id: "friends", label: "Сообщения", icon: "MessageCircle" },
+    { id: "chat", label: "Общий чат", icon: "Hash" },
     { id: "groups", label: "Группы", icon: "Users" },
   ];
 
@@ -194,61 +174,9 @@ export default function Community() {
           </div>
         )}
 
-        {/* FRIENDS */}
+        {/* FRIENDS CHAT */}
         {activeTab === "friends" && (
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex-1 relative">
-                <Icon name="Search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="Найти игрока..."
-                  value={friendSearch}
-                  onChange={(e) => setFriendSearch(e.target.value)}
-                  className="w-full bg-card border border-border rounded-xl pl-10 pr-4 py-2.5 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-[var(--neon-cyan)]/50"
-                />
-              </div>
-              <button className="btn-primary px-4 py-2.5 rounded-xl text-sm flex items-center gap-2">
-                <Icon name="UserPlus" size={15} />
-                Добавить
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {filteredFriends.map((f, i) => (
-                <div key={i} className="card-game rounded-2xl p-4 flex items-center gap-3">
-                  <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-xl">
-                      {f.avatar}
-                    </div>
-                    <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-card ${statusColor[f.status]}`} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-rajdhani font-bold truncate">{f.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {f.game ? `🎮 ${f.game}` : f.status === "away" ? "Отошёл" : "Не в сети"}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-lg bg-secondary hover:bg-[var(--neon-cyan)]/10 hover:text-[var(--neon-cyan)] text-muted-foreground transition-all flex items-center justify-center">
-                      <Icon name="MessageCircle" size={14} />
-                    </button>
-                    <button className="w-8 h-8 rounded-lg bg-secondary hover:bg-[var(--neon-orange)]/10 hover:text-[var(--neon-orange)] text-muted-foreground transition-all flex items-center justify-center">
-                      <Icon name="Gamepad2" size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6 p-4 rounded-2xl border border-dashed border-border text-center text-muted-foreground">
-              <Icon name="UserPlus" size={28} className="mx-auto mb-2 opacity-40" />
-              <p className="text-sm">Пригласи друзей в ForgeWorld</p>
-              <button className="btn-secondary px-5 py-2 rounded-lg text-sm mt-3">
-                Скопировать ссылку
-              </button>
-            </div>
-          </div>
+          <FriendChat />
         )}
 
         {/* CHAT */}
